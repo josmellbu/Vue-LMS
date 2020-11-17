@@ -1,9 +1,13 @@
 <template>
-  <div class="hello">
-    <p>
-      {{ list }}
-    </p>
-    <table class="table table-hover">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-10">
+        <h1>Courses</h1>
+        <hr><br><br>
+        <alert :message=message v-if="showMessage"></alert>
+        <button type="button" class="btn btn-success btn-sm" v-on:click="nuevo()">Add Courses</button>
+        <br><br>
+        <table class="table table-hover">
           <thead>
             <tr>
               <th scope="col">#</th>
@@ -18,9 +22,28 @@
               <td>{{ d.Name }}</td>
               <td>{{ d.Period }}</td>
               <td>{{ d.Note }}</td>
+              <td>
+                <div class="btn-group" role="group">
+                  <button
+                          type="button"
+                          class="btn btn-warning btn-sm"
+                          v-b-modal.book-update-modal
+                          @click="editBook(d)">
+                      Update
+                  </button>
+                  <button
+                          type="button"
+                          class="btn btn-danger btn-sm"
+                          @click="onDeleteBook(d)">
+                      Delete
+                  </button>
+                </div>
+              </td>
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -31,10 +54,18 @@ export default {
   name: 'Courses',
   data: function() {
     return{
-      list: ""
+      list: [],
+      message: '',
+      showMessage: false,
     }
   },
   methods: {
+    editar(id){
+      this.$router.push('/editar/' + id);
+    },
+    nuevo(){
+      this.$router.push('/courses/new');
+    },
     getBooks: function() {
       const path = 'http://localhost:8080/cour/courses/';
       axios.get(path)
@@ -47,7 +78,7 @@ export default {
         });
     },
     addBook: function(payload){
-      const path = 'http://localhost:5001/books';
+      const path = 'http://localhost:8080/cour/courses/';
       console.log(path+payload);
     },
     editBook: function(cad) {
