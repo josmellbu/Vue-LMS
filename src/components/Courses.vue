@@ -5,36 +5,37 @@
         <h1>Courses</h1>
         <hr><br><br>
         <alert :message=message v-if="showMessage"></alert>
-        <button type="button" class="btn btn-success btn-sm" v-on:click="nuevo()">Add Courses</button>
+        <button type="button" class="btn btn-success btn-sm" v-on:click="novo()">Add Courses</button>
         <br><br>
         <table class="table table-hover">
           <thead>
             <tr>
               <th scope="col">#</th>
-              <th scope="col">Name</th>
-              <th scope="col">Period</th>
-              <th scope="col">Note</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Periodo</th>
+              <th scope="col">Nota</th>
+              <th scope="col">Opciones</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(d, index) in list" :key="index">
               <td>{{ index+1 }}</td>
-              <td>{{ d.Name }}</td>
-              <td>{{ d.Period }}</td>
-              <td>{{ d.Note }}</td>
-              <td>
+              <td>{{ d.name }}</td>
+              <td>{{ d.period }}</td>
+              <td>{{ d.note }}</td>
+              <td class="text-center">
                 <div class="btn-group" role="group">
                   <button
                           type="button"
                           class="btn btn-warning btn-sm"
                           v-b-modal.book-update-modal
-                          @click="editBook(d)">
+                          @click="editar(d.ID)">
                       Update
                   </button>
                   <button
                           type="button"
                           class="btn btn-danger btn-sm"
-                          @click="onDeleteBook(d)">
+                          @click="onDelete(d)">
                       Delete
                   </button>
                 </div>
@@ -61,32 +62,39 @@ export default {
   },
   methods: {
     editar(id){
-      this.$router.push('/editar/' + id);
+      this.$router.push('/courses/new/' + id);
     },
-    nuevo(){
+    novo: function(){
       this.$router.push('/courses/new');
     },
-    getBooks: function() {
+    getCourses: function() {
       const path = 'http://localhost:8080/cour/courses/';
-      axios.get(path)
-        .then((res) => {
+      axios.get(path).then((res) => {
           this.list = res.data;
         })
         .catch((error) => {
-          // eslint-disable-next-line
           console.error(error);
         });
     },
-    addBook: function(payload){
-      const path = 'http://localhost:8080/cour/courses/';
-      console.log(path+payload);
+    onDelete: function (d) {
+      this.delete(d.ID);
     },
-    editBook: function(cad) {
-      console.log("edit "+cad+": "+this.message);
-    }
+    delete: function (id) {
+      const path = `http://localhost:8080/cour/courses/${id}`;
+      axios.delete(path)
+        .then(() => {
+          this.getCourses();
+          this.message = "Course removed!";
+          this.showMessage = true;
+        })
+        .catch((error) => {
+          console.error(error);
+          this.getCourses();
+        });
+    },
   },
   created: function() {
-    this.getBooks();
+    this.getCourses();
   }
 }
 </script>

@@ -6,14 +6,14 @@
         <hr><br><br>
         <button type="button" class="btn btn-success btn-sm" v-on:click="back()">Cancel</button>
         <br><br>
-
+        ID={{ f.ID }}
         <b-form @submit="onSubmit" @reset="onReset" class="w-100">
         <b-form-group id="form-name-group"
                       label="Name:"
                       label-for="form-name-input">
             <b-form-input id="form-name-input"
                           type="text"
-                          v-model="f.Name"
+                          v-model="f.name"
                           required
                           placeholder="Enter name">
             </b-form-input>
@@ -23,7 +23,7 @@
                         label-for="form-period-input">
               <b-form-input id="form-period-input"
                             type="text"
-                            v-model="f.Period"
+                            v-model="f.period"
                             required
                             placeholder="Enter period">
               </b-form-input>
@@ -33,7 +33,7 @@
                         label-for="form-note-input">
               <b-form-input id="form-note-input"
                             type="text"
-                            v-model="f.Note"
+                            v-model="f.note"
                             required
                             placeholder="Enter note">
               </b-form-input>
@@ -59,14 +59,19 @@ export default {
       message: '',
       showMessage: false,
       f: {
-        "Name": "",
-        "Period": "",
-        "Note": "",
+        "name": "",
+        "period": "",
+        "note": "",
       }
     }
   },
   methods: {
-    addBook(payload) {
+
+    back: function (){
+    this.$router.push("/courses")
+    },
+
+    create: function (payload) {
       const path = 'http://localhost:8080/cour/courses/';
       axios.post(path, payload)
         .then(() => {
@@ -81,28 +86,59 @@ export default {
           console.log(error);
         });
     },
-    initForm() {
-      this.f.Name = '';
-      this.f.Period = '';
-      this.f.Note = '';
+    initForm: function() {
+      this.f.name = "";
+      this.f.period = "";
+      this.f.note = "";
     },
-    onSubmit(evt) {
+    onSubmit: function(evt) {
       evt.preventDefault();
       const payload = {
-        name: this.f.Name,
-        period: this.f.Period,
-        note: this.f.Note,
+        name: this.f.name,
+        period: this.f.period,
+        note: this.f.note,
       };
-      this.addBook(payload);
+      if (this.f.ID > 0){
+        this.updateCourses(payload, this.f.ID)
+      } else {
+        this.create(payload)
+      }
       this.initForm();
     },
     onReset(evt) {
       evt.preventDefault();
       this.initForm();
     },
+    getCoursesId: function(id) {
+      const path = 'http://localhost:8080/cour/courses/'+id;
+      axios.get(path)
+        .then((res) => {
+          this.f = res.data;
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.error(error);
+        });
+    },
+    updateCourses: function (payload, id) {
+      const path = `http://localhost:8080/cour/courses/${id}`;
+      axios.put(path, payload).then(() => {
+          console.log(payload);
+          this.$router.push("/courses")
+          this.message = 'Courses updated!';
+          this.showMessage = true;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
   },
   created: function(){
-    //this.getBooks();
+    this.f.ID = this.$route.params.id;
+    if (this.f.ID>0){
+      this.getCoursesId(this.f.ID)
+      //this.getBooks();
+    }
   },
 }
 </script>

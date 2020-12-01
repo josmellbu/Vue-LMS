@@ -1,4 +1,5 @@
 <template>
+
   <div class="app">
     <p>
     <!-- use router-link component for navigation. -->
@@ -7,8 +8,12 @@
     <router-link to="/">home</router-link>
     <router-link to="/courses">Go to Courses</router-link>
     <router-link to="/students">Go to Students</router-link>
+    <router-link to="/login">Login</router-link>
+    <router-link to="/logout">Salir</router-link>
   </p>
+  <div>
     <router-view/>
+  </div>
   </div>
 </template>
 
@@ -19,6 +24,5 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
