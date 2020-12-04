@@ -5,7 +5,7 @@
     <!-- use router-link component for navigation. -->
     <!-- specify the link by passing the `to` prop. -->
     <!-- `<router-link>` will be rendered as an `<a>` tag by default -->
-    <router-link to="/">home</router-link>
+    <router-link to="/login">home</router-link>
     <router-link to="/courses">Go to Courses</router-link>
     <router-link to="/students">Go to Students</router-link>
     <router-link to="/login">Login</router-link>
